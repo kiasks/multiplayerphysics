@@ -1,11 +1,22 @@
-// Importamos el módulo 'ws' y extraemos la clase WebSocketServer
+// Importamos los módulos necesarios
+const http = require('http');
 const { WebSocketServer } = require('ws');
 const WebSocket = require('ws'); // Necesario para validar WebSocket.OPEN en el broadcast
 
-// Inicializamos el servidor de WebSockets en el puerto 8080 (puedes cambiar el puerto si usas otro)
-const wss = new WebSocketServer({ port: 8080 });
+// 1. Creamos el servidor HTTP nativo requerido por hostings como Render
+const server = http.createServer((req, res) => {
+    res.writeHead(200, { 'Content-Type': 'text/plain' });
+    res.end('¡Servidor de HTMLPHYSICS corriendo en la nube perfectamente!');
+});
 
-console.log("Servidor WebSocket corriendo en el puerto 8080... ¡Listo para los jugadores!");
+// 2. Conectamos el servidor de WebSockets al servidor HTTP que creamos arriba
+const wss = new WebSocketServer({ server });
+
+// Usamos el puerto dinámico asignado por Render o el 8080 de forma local si estás en tu PC
+const PORT = process.env.PORT || 8080;
+server.listen(PORT, () => {
+    console.log(`Servidor WebSocket corriendo mundialmente en el puerto ${PORT}... ¡Listo para los jugadores!`);
+});
 
 const clientes = {}; 
 
